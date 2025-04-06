@@ -10,11 +10,6 @@ primary_region = "fra"
   PHX_HOST = "pii-monitor.fly.dev"
   PORT = "8080"
   MONITORING_INTERVAL_MS = "10000"
-  # Variables below should be configured through fly secrets
-  # SLACK_API_TOKEN = "sensitive value"
-  # NOTION_API_KEY = "sensitive value"
-  # OPENAI_API_KEY = "sensitive value"
-  # SECRET_KEY_BASE = "sensitive value"
 
 [http_service]
   internal_port = 8080
