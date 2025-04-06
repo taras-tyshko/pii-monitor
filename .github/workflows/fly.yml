@@ -43,15 +43,3 @@ jobs:
         run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-          # Slack API token (with permissions for reading messages, deletion, etc.)
-          SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
-          # Slack channels for monitoring (comma-separated)
-          SLACK_MONITORED_CHANNELS: ${{ secrets.SLACK_MONITORED_CHANNELS }}
-          # Notion API key
-          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
-          # Notion database IDs for monitoring (comma-separated)
-          NOTION_MONITORED_DATABASES: ${{ secrets.NOTION_MONITORED_DATABASES }}
-          # OpenAI API key for PII analysis
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          # OpenAI Organization ID (optional)
-          OPENAI_ORGANIZATION_KEY: ${{ secrets.OPENAI_ORGANIZATION_KEY }}

@@ -42,7 +42,6 @@ defmodule PiiMonitorWeb do
         layouts: [html: PiiMonitorWeb.Layouts]
 
       import Plug.Conn
-      import PiiMonitorWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -70,7 +69,6 @@ defmodule PiiMonitorWeb do
       import Phoenix.HTML
       # Import basic form functionality
       import Phoenix.HTML.Form
-      import PiiMonitorWeb.Gettext
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
