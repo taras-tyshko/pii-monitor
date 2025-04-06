@@ -12,8 +12,9 @@ config :pii_monitor,
 
 # PII Monitor Configuration
 config :pii_monitor, PiiMonitor.Monitoring,
-  slack_channels: System.get_env("SLACK_MONITORED_CHANNELS", ""),
-  notion_databases: System.get_env("NOTION_MONITORED_DATABASES", ""),
+  slack_channels: System.get_env("SLACK_MONITORED_CHANNELS", "social"),
+  notion_databases:
+    System.get_env("NOTION_MONITORED_DATABASES", "1cded42e0f6380bfb085deef6edf7e99"),
   monitoring_interval_ms: String.to_integer(System.get_env("MONITORING_INTERVAL_MS", "1000"))
 
 # API Credentials
