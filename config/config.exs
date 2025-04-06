@@ -12,8 +12,8 @@ config :pii_monitor,
 
 # PII Monitor Configuration
 config :pii_monitor, PiiMonitor.Monitoring,
-  slack_channels: System.get_env("SLACK_MONITORED_CHANNELS"),
-  notion_databases: System.get_env("NOTION_MONITORED_DATABASES"),
+  slack_channels: System.get_env("SLACK_MONITORED_CHANNELS", ""),
+  notion_databases: System.get_env("NOTION_MONITORED_DATABASES", ""),
   monitoring_interval_ms: String.to_integer(System.get_env("MONITORING_INTERVAL_MS", "1000"))
 
 # API Credentials
@@ -21,7 +21,7 @@ config :pii_monitor,
   slack_api_token: System.get_env("SLACK_API_TOKEN"),
   notion_api_key: System.get_env("NOTION_API_KEY"),
   openai_api_key: System.get_env("OPENAI_API_KEY"),
-  openai_organization_key: System.get_env("OPENAI_ORGANIZATION_KEY")
+  openai_organization_key: System.get_env("OPENAI_ORGANIZATION_KEY", "")
 
 # Configures the endpoint
 config :pii_monitor, PiiMonitorWeb.Endpoint,
