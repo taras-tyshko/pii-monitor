@@ -88,15 +88,57 @@ The application is built using Elixir/Phoenix and consists of the following comp
 - **PiiMonitor.NotionClient** - module for interacting with Notion API
 - **PiiMonitor.PiiAnalyzer** - module for analyzing content for PII using OpenAI
 
+## Developer Settings
+
+- Change the monitoring interval in config/config.exs
+- Configure the list of channels and databases in the configuration or through environment variables
+- If necessary, change the PII detection logic in the PiiAnalyzer module
+
+## Code Quality and Security
+
+### Credo
+
+The project uses [Credo](https://github.com/rrrene/credo) for static code analysis to maintain code quality. Credo checks for style consistency, code smells, and other issues.
+
+To run code analysis:
+
+```bash
+# Run standard code analysis
+mix lint
+
+# Run analysis with suggestions for improvements
+mix lint.fix
+```
+
+Key improvements implemented with Credo:
+- Enhanced code readability by formatting large numbers (e.g., 10_000 instead of 10000)
+- Alphabetized module aliases 
+- Removed debug IO.inspect calls
+- Optimized code by replacing Enum.map |> Enum.join with Enum.map_join
+- Standardized code style throughout the project
+
+### Sobelow
+
+For security analysis, the project employs [Sobelow](https://github.com/nccgroup/sobelow), a security-focused static analysis tool for Phoenix applications.
+
+To run security analysis:
+
+```bash
+# Run security check
+mix security.scan
+```
+
+Security improvements implemented:
+- Added Content-Security-Policy headers to the browser pipeline
+- Configured HTTPS enforcement in production using force_ssl
+- Implemented secure file handling to prevent directory traversal attacks:
+  - Added path validation for file operations (read, write, delete)
+  - Restricted file operations to temporary directories only
+  - Created dedicated secure functions for file management
+
 ## Libraries Used
 
 Main project dependencies:
 - **HTTPoison** - HTTP client for API interaction
 - **Poison** - JSON parser for working with API responses
 - **Phoenix** - web application framework
-
-## Developer Settings
-
-- Change the monitoring interval in config/config.exs
-- Configure the list of channels and databases in the configuration or through environment variables
-- If necessary, change the PII detection logic in the PiiAnalyzer module
