@@ -247,16 +247,37 @@ defmodule PiiMonitor.SlackClient do
   defp write_temp_file(content, extension) do
     # Generate a secure random filename in the temp directory
     temp_dir = System.tmp_dir!()
-    filename = "pii_monitor_#{:rand.uniform(999_999)}.#{extension}"
+    # Sanitize the extension to prevent command injection
+    safe_extension = extension |> String.replace(~r/[^a-zA-Z0-9]/, "")
+    # Use secure randomization for filename
+    random_id = :crypto.strong_rand_bytes(16) |> Base.encode16(case: :lower)
+    filename = "pii_monitor_#{random_id}.#{safe_extension}"
     temp_path = Path.join(temp_dir, filename)
 
+    # Additional security checks
+    canonical_temp_path = Path.expand(temp_path)
+    canonical_temp_dir = Path.expand(temp_dir)
+
     # Ensure the path is still in the temp directory (prevent path traversal)
-    if Path.dirname(temp_path) != temp_dir do
+    if Path.dirname(canonical_temp_path) != canonical_temp_dir do
+      Logger.error("Path traversal attempt detected: #{temp_path}")
       {:error, :invalid_path}
     else
-      case File.write(temp_path, content) do
-        :ok -> {:ok, temp_path}
-        {:error, reason} -> {:error, reason}
+      # Use binary mode to ensure consistent file handling
+      file_mode = [:write, :binary]
+      case File.open(temp_path, file_mode) do
+        {:ok, file} ->
+          try do
+            case IO.binwrite(file, content) do
+              :ok -> {:ok, temp_path}
+              {:error, reason} -> {:error, reason}
+            end
+          after
+            File.close(file)
+          end
+        {:error, reason} ->
+          Logger.error("Could not open file for writing: #{inspect(reason)}")
+          {:error, reason}
       end
     end
   end
@@ -264,8 +285,25 @@ defmodule PiiMonitor.SlackClient do
   # Safely delete a temporary file
   defp delete_temp_file(temp_path) when is_binary(temp_path) do
     # Ensure the file is in the temp directory
-    if String.starts_with?(temp_path, System.tmp_dir!()) do
-      File.rm(temp_path)
+    temp_dir = System.tmp_dir!()
+    # Canonicalize paths before comparison
+    canonical_temp_path = Path.expand(temp_path)
+    canonical_temp_dir = Path.expand(temp_dir)
+
+    if String.starts_with?(canonical_temp_path, canonical_temp_dir) and
+       Path.dirname(canonical_temp_path) == canonical_temp_dir do
+      # Verify file exists before attempting to delete
+      case File.stat(temp_path) do
+        {:ok, %{type: :regular}} ->
+          # Only delete regular files, not directories or other special files
+          File.rm(temp_path)
+        {:ok, _} ->
+          Logger.error("Not a regular file, will not delete: #{temp_path}")
+          {:error, :not_regular_file}
+        {:error, reason} ->
+          Logger.error("Error accessing file to delete: #{inspect(reason)}")
+          {:error, reason}
+      end
     else
       Logger.error("Attempted to delete file outside of temp directory: #{temp_path}")
       {:error, :invalid_path}

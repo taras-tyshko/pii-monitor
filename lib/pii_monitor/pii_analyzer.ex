@@ -147,20 +147,43 @@ defmodule PiiMonitor.PiiAnalyzer do
   """
   def analyze_pdf(pdf_path) when is_binary(pdf_path) do
     # Validate the file path is in the allowed directory (temp directory)
-    if String.starts_with?(pdf_path, System.tmp_dir!()) do
-      # Simplified version - assume it's a text PDF and read it as a file
-      case File.read(pdf_path) do
-        {:ok, content} ->
-          # Use limited amount of text to avoid issues with large files
-          analyze_text(String.slice(content, 0, 10_000))
+    temp_dir = System.tmp_dir!()
+    # Canonicalize paths before comparison to prevent directory traversal
+    canonical_pdf_path = Path.expand(pdf_path)
+    canonical_temp_dir = Path.expand(temp_dir)
+
+    if String.starts_with?(canonical_pdf_path, canonical_temp_dir) and
+       Path.dirname(canonical_pdf_path) == canonical_temp_dir do
+      # Verify the file exists and is readable before attempting to read it
+      case File.stat(pdf_path) do
+        {:ok, %{access: access}} when access in [:read, :read_write] ->
+          # Use a more secure file reading approach with explicit path validation
+          read_and_analyze_pdf(pdf_path)
+
+        {:ok, _} ->
+          Logger.error("Cannot read PDF file: #{pdf_path} - insufficient permissions")
+          {:error, :insufficient_permissions}
 
         {:error, reason} ->
-          Logger.error("Error when reading PDF file: #{inspect(reason)}")
+          Logger.error("Error accessing PDF file: #{inspect(reason)}")
           {:error, reason}
       end
     else
       Logger.error("Invalid file path: #{pdf_path} - not in temp directory")
       {:error, :invalid_path}
+    end
+  end
+
+  # Private function to safely read and analyze PDF content
+  defp read_and_analyze_pdf(pdf_path) do
+    case File.read(pdf_path) do
+      {:ok, content} ->
+        # Use limited amount of text to avoid issues with large files
+        analyze_text(String.slice(content, 0, 10_000))
+
+      {:error, reason} ->
+        Logger.error("Error when reading PDF file: #{inspect(reason)}")
+        {:error, reason}
     end
   end
 

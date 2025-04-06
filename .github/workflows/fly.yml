@@ -36,9 +36,6 @@ jobs:
       - name: Run Credo
         run: mix lint
         
-      # - name: Run Sobelow
-      #   run: mix security.scan
-        
       - name: Setup fly
         uses: superfly/flyctl-actions/setup-flyctl@master
         

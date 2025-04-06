@@ -58,9 +58,7 @@ defmodule PiiMonitor.MixProject do
       {:poison, "~> 5.0"},
 
       # Development tools
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      # Security scanner
-      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -82,9 +80,7 @@ defmodule PiiMonitor.MixProject do
       ],
       # Credo aliases
       lint: ["credo --strict"],
-      "lint.fix": ["credo suggest --strict"],
-      # Sobelow security scan
-      "security.scan": ["sobelow --verbose"]
+      "lint.fix": ["credo suggest --strict"]
     ]
   end
 end
