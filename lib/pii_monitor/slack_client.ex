@@ -265,6 +265,7 @@ defmodule PiiMonitor.SlackClient do
     else
       # Use binary mode to ensure consistent file handling
       file_mode = [:write, :binary]
+
       case File.open(temp_path, file_mode) do
         {:ok, file} ->
           try do
@@ -275,6 +276,7 @@ defmodule PiiMonitor.SlackClient do
           after
             File.close(file)
           end
+
         {:error, reason} ->
           Logger.error("Could not open file for writing: #{inspect(reason)}")
           {:error, reason}
@@ -291,15 +293,17 @@ defmodule PiiMonitor.SlackClient do
     canonical_temp_dir = Path.expand(temp_dir)
 
     if String.starts_with?(canonical_temp_path, canonical_temp_dir) and
-       Path.dirname(canonical_temp_path) == canonical_temp_dir do
+         Path.dirname(canonical_temp_path) == canonical_temp_dir do
       # Verify file exists before attempting to delete
       case File.stat(temp_path) do
         {:ok, %{type: :regular}} ->
           # Only delete regular files, not directories or other special files
           File.rm(temp_path)
+
         {:ok, _} ->
           Logger.error("Not a regular file, will not delete: #{temp_path}")
           {:error, :not_regular_file}
+
         {:error, reason} ->
           Logger.error("Error accessing file to delete: #{inspect(reason)}")
           {:error, reason}

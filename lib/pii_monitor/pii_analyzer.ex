@@ -153,7 +153,7 @@ defmodule PiiMonitor.PiiAnalyzer do
     canonical_temp_dir = Path.expand(temp_dir)
 
     if String.starts_with?(canonical_pdf_path, canonical_temp_dir) and
-       Path.dirname(canonical_pdf_path) == canonical_temp_dir do
+         Path.dirname(canonical_pdf_path) == canonical_temp_dir do
       # Verify the file exists and is readable before attempting to read it
       case File.stat(pdf_path) do
         {:ok, %{access: access}} when access in [:read, :read_write] ->

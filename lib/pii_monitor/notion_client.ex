@@ -124,8 +124,7 @@ defmodule PiiMonitor.NotionClient do
 
     # If there is PII, delete the page and send a message to the author
     if has_pii do
-      with {:ok, creator} <- get_page_creator(page),
-           {:ok, email} <- get_user_email(creator),
+      with {:ok, email} <- get_user_email_from_page(page),
            :ok <- delete_page(page["id"]) do
         # Try to find Slack user by email
         case SlackClient.find_user_by_email(email) do
@@ -139,7 +138,7 @@ defmodule PiiMonitor.NotionClient do
 
           {:error, _reason} ->
             # If Slack user is not found, log a message
-            Logger.warning("Could not find Slack user with email #{email}. Message not sent.")
+            Logger.warning("Could not find Slack user with email #{email} | Message not sent.")
         end
 
         {:ok, :page_processed}
@@ -150,6 +149,69 @@ defmodule PiiMonitor.NotionClient do
       end
     else
       {:ok, :no_pii_found}
+    end
+  end
+
+  # Gets the email of a Notion user from page properties
+  def get_user_email_from_page(page) do
+    # Перевіряємо properties у сторінці
+    case page["properties"] do
+      properties when is_map(properties) ->
+        # Спочатку перевіряємо наявність created_by властивості
+        created_by_email = find_email_in_property(properties["Created by"])
+
+        # Якщо не знайшли, перевіряємо last_edited_by
+        last_edited_email = find_email_in_property(properties["Last edited by"])
+
+        # Повертаємо перший знайдений варіант
+        cond do
+          created_by_email ->
+            Logger.info("Found email in created_by property: #{created_by_email}")
+            {:ok, created_by_email}
+
+          last_edited_email ->
+            Logger.info("Found email in last_edited_by property: #{last_edited_email}")
+            {:ok, last_edited_email}
+
+          true ->
+            # Якщо нічого не знайшли, використовуємо існуючу логіку
+            get_user_from_metadata(page)
+        end
+
+      _ ->
+        # Якщо properties немає або це не мапа, використовуємо існуючу логіку
+        get_user_from_metadata(page)
+    end
+  end
+
+  # Витягує email з властивості сторінки
+  defp find_email_in_property(property) do
+    cond do
+      # Якщо це поле Created by
+      property && property["type"] == "created_by" && property["created_by"] ->
+        get_in(property, ["created_by", "person", "email"])
+
+      # Якщо це поле Last edited by
+      property && property["type"] == "last_edited_by" && property["last_edited_by"] ->
+        get_in(property, ["last_edited_by", "person", "email"])
+
+      true ->
+        nil
+    end
+  end
+
+  # Використовуємо метадані сторінки якщо властивості не містять email
+  defp get_user_from_metadata(page) do
+    # Спочатку перевіряємо created_by
+    if page["created_by"] do
+      get_user_email(page["created_by"])
+      # Потім перевіряємо last_edited_by
+    else
+      if page["last_edited_by"] do
+        get_user_email(page["last_edited_by"])
+      else
+        {:error, :email_not_found}
+      end
     end
   end
 
