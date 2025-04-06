@@ -125,7 +125,7 @@ To run security analysis:
 
 ```bash
 # Run security check
-mix security.scan 
+mix security.scan
 ```
 
 Security improvements implemented:
