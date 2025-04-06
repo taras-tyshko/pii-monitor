@@ -9,7 +9,7 @@ defmodule PiiMonitorWeb.HealthcheckController do
     json(conn, %{
       status: "ok",
       service: "pii_monitor",
-      version: Application.spec(:pii_monitor, :vsn),
+      version: to_string(Application.spec(:pii_monitor, :vsn)),
       timestamp: DateTime.utc_now() |> DateTime.to_iso8601()
     })
   end
