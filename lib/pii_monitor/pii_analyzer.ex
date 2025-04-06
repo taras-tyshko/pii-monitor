@@ -147,10 +147,7 @@ defmodule PiiMonitor.PiiAnalyzer do
   """
   def analyze_pdf(pdf_path) when is_binary(pdf_path) do
     # Validate the file path is in the allowed directory (temp directory)
-    if not String.starts_with?(pdf_path, System.tmp_dir!()) do
-      Logger.error("Invalid file path: #{pdf_path} - not in temp directory")
-      {:error, :invalid_path}
-    else
+    if String.starts_with?(pdf_path, System.tmp_dir!()) do
       # Simplified version - assume it's a text PDF and read it as a file
       case File.read(pdf_path) do
         {:ok, content} ->
@@ -161,6 +158,9 @@ defmodule PiiMonitor.PiiAnalyzer do
           Logger.error("Error when reading PDF file: #{inspect(reason)}")
           {:error, reason}
       end
+    else
+      Logger.error("Invalid file path: #{pdf_path} - not in temp directory")
+      {:error, :invalid_path}
     end
   end
 

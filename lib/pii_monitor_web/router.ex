@@ -6,10 +6,12 @@ defmodule PiiMonitorWeb.Router do
     plug :fetch_session
     plug :put_root_layout, html: {PiiMonitorWeb.Layouts, :root}
     plug :protect_from_forgery
+
     plug :put_secure_browser_headers,
-      %{
-        "content-security-policy" => "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'"
-      }
+         %{
+           "content-security-policy" =>
+             "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'"
+         }
   end
 
   pipeline :api do

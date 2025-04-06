@@ -31,10 +31,10 @@ jobs:
         run: mix deps.get
       
       - name: Run tests
-        run: mix test
+        run: mix test 
         
-      # - name: Run Credo
-      #   run: mix lint
+      - name: Run Credo
+        run: mix lint
         
       # - name: Run Sobelow
       #   run: mix security.scan

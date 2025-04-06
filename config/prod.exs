@@ -7,8 +7,6 @@ import Config
 # before starting your production server.
 config :pii_monitor, PiiMonitorWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
-  # Тимчасово вимикаємо для налагодження
-  # force_ssl: [hsts: true]
 
 # Do not print debug messages in production
 config :logger, level: :info
