@@ -11,10 +11,10 @@ primary_region = "fra"
   PORT = "8080"
   MONITORING_INTERVAL_MS = "10000"
   # Variables below should be configured through fly secrets
-  # SLACK_API_TOKEN = "xoxp-8715406832547-8715406833491-8723523899633-59ec74079c098f282a247889535f3f1a"
-  # NOTION_API_KEY = "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"
-  # OPENAI_API_KEY = "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"
-  # SECRET_KEY_BASE = "/noIB/CAp9960RppPGHQcqI8Go1/TjX3BP2Fuxx0cxF5ii/R40oTzojj0EkaAqvm"
+  # SLACK_API_TOKEN = "sensitive value"
+  # NOTION_API_KEY = "sensitive value"
+  # OPENAI_API_KEY = "sensitive value"
+  # SECRET_KEY_BASE = "sensitive value"
 
 [http_service]
   internal_port = 8080
