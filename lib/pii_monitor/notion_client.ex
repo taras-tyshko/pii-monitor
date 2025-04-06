@@ -100,8 +100,6 @@ defmodule PiiMonitor.NotionClient do
   Analyzes a page for PII and processes it if PII is detected.
   """
   def process_page(page) do
-    has_pii = false
-
     # Getting page content
     {:ok, content} =
       case get_page_content(page["id"]) do
