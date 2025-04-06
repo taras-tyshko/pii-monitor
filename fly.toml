@@ -10,7 +10,6 @@ primary_region = "fra"
   PHX_HOST = "pii-monitor.fly.dev"
   PORT = "8080"
   MONITORING_INTERVAL_MS = "10000"
-  SLACK_API_TOKEN=xoxp-8715406832547-8715406833491-8735399217088-67b288415a3f5c82d4db03325088d8a1
 
 [http_service]
   internal_port = 8080
