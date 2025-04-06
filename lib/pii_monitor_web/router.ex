@@ -22,6 +22,13 @@ defmodule PiiMonitorWeb.Router do
     get "/", PageController, :home
   end
 
+  # API routes
+  scope "/api", PiiMonitorWeb do
+    pipe_through :api
+
+    get "/healthcheck", HealthcheckController, :index
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", PiiMonitorWeb do
   #   pipe_through :api
