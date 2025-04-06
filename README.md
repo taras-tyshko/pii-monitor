@@ -136,6 +136,52 @@ Security improvements implemented:
   - Restricted file operations to temporary directories only
   - Created dedicated secure functions for file management
 
+## Deployment
+
+### Deploying to Fly.io
+
+The application is configured for easy deployment to [Fly.io](https://fly.io/) using GitHub Actions:
+
+1. **Prerequisites**:
+   - GitHub repository with this code
+   - Fly.io account
+   - Fly CLI installed locally for initial setup
+
+2. **Initial setup**:
+   ```bash
+   # Login to Fly.io
+   fly auth login
+   
+   # Create a new Fly.io app (only once)
+   fly launch --no-deploy
+   ```
+
+3. **Setting up secrets**:
+   Store sensitive information using Fly.io secrets:
+   ```bash
+   fly secrets set SLACK_API_TOKEN=your_slack_token
+   fly secrets set NOTION_API_KEY=your_notion_key
+   fly secrets set OPENAI_API_KEY=your_openai_key
+   fly secrets set SECRET_KEY_BASE=$(mix phx.gen.secret)
+   ```
+
+4. **GitHub Actions integration**:
+   - Create a Fly.io API token:
+     ```bash
+     fly auth token
+     ```
+   - Add the token to your GitHub repository secrets as `FLY_API_TOKEN`
+   
+5. **Deployment**:
+   - Automatic deployment will occur when changes are pushed to the `master` branch
+   - Manual deployment can be triggered through GitHub Actions interface
+
+### Configuration
+
+The deployment configuration is defined in two files:
+- `fly.toml` - Fly.io configuration including regions, resources, and environment variables
+- `.github/workflows/fly.yml` - GitHub Actions workflow that runs tests and deploys the application
+
 ## Libraries Used
 
 Main project dependencies:

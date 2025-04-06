@@ -1,0 +1,35 @@
+app = "pii-monitor"
+primary_region = "fra"
+
+[build]
+  [build.args]
+    ELIXIR_VERSION = "1.14.5"
+    OTP_VERSION = "25.3.2.13"
+
+[env]
+  PHX_HOST = "pii-monitor.fly.dev"
+  PORT = "8080"
+  MONITORING_INTERVAL_MS = "10000"
+  # Variables below should be configured through fly secrets
+  # SLACK_API_TOKEN = "xoxp-8715406832547-8715406833491-8723523899633-59ec74079c098f282a247889535f3f1a"
+  # NOTION_API_KEY = "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"
+  # OPENAI_API_KEY = "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"
+  # SECRET_KEY_BASE = "/noIB/CAp9960RppPGHQcqI8Go1/TjX3BP2Fuxx0cxF5ii/R40oTzojj0EkaAqvm"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+  
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 1000
+    soft_limit = 500
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1 
