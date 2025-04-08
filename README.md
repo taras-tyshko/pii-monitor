@@ -117,7 +117,7 @@ Key improvements implemented with Credo:
 - Optimized code by replacing Enum.map |> Enum.join with Enum.map_join
 - Standardized code style throughout the project
 
-### Sobelow
+### Sobelow 
 
 For security analysis, the project employs [Sobelow](https://github.com/nccgroup/sobelow), a security-focused static analysis tool for Phoenix applications.
 
